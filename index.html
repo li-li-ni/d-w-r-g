@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>第五人格胜率预测</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f4f4f4;
+        }
+        .container {
+            background-color: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: #555;
+        }
+        select, input[type="number"] {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        input[type="number"] {
+            width: 100px;
+        }
+        .group-input {
+            margin-bottom: 10px;
+            padding: 10px;
+            background-color: #f9f9f9;
+            border-radius: 4px;
+        }
+        button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            width: 100%;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        .result {
+            margin-top: 30px;
+            padding: 20px;
+            background-color: #e8f5e8;
+            border-radius: 4px;
+        }
+        .result h2 {
+            margin-top: 0;
+            color: #333;
+        }
+        .result p {
+            font-size: 18px;
+            margin: 10px 0;
+        }
+        .note {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #fff3cd;
+            border-radius: 4px;
+            font-size: 14px;
+            color: #856404;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>第五人格胜率预测</h1>
+        
+        <div class="form-group">
+            <label for="team-composition">求生者组排情况</label>
+            <select id="team-composition" onchange="updateInputFields()">
+                <option value="">请选择</option>
+                <option value="four-solo">四个单排</option>
+                <option value="one-duo-two-solo">一组双排两组单排</option>
+                <option value="one-trio-one-solo">一组三排一组单排</option>
+                <option value="two-duo">两组双排</option>
+                <option value="one-four">一组四排</option>
+            </select>
+        </div>
+        
+        <div id="survivor-inputs" class="form-group">
+            <!-- 动态生成的求生者胜率输入字段 -->
+        </div>
+        
+        <div class="form-group">
+            <label for="hunter-winrate">监管者胜率 (%)</label>
+            <input type="number" id="hunter-winrate" min="0" max="100" step="0.1" placeholder="例如：55.5">
+        </div>
+        
+        <button onclick="calculateWinrate()">计算胜率</button>
+        
+        <div id="result" class="result" style="display: none;">
+            <h2>预测结果</h2>
+            <p>监管者胜率: <span id="predicted-hunter-winrate"></span>%</p>
+            <p>求生者胜率: <span id="predicted-survivor-winrate"></span>%</p>
+        </div>
+        
+        <div class="note">
+            <strong>注：</strong>此计算方式默认组排的各个求生者胜率相同。
+        </div>
+    </div>
+    
+    <script src="script.js"></script>
+</body>
+</html>

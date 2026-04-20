@@ -1,0 +1,114 @@
+// 逻辑斯蒂函数
+function logistic(x) {
+    return 1 / (1 + Math.exp(-x));
+}
+
+// 逻辑斯蒂函数的反函数
+function inverseLogistic(p) {
+    // 避免除以零或取对数为负数的情况
+    if (p <= 0) return -10;
+    if (p >= 1) return 10;
+    return Math.log(p / (1 - p));
+}
+
+// 根据选择的组排情况动态生成输入字段
+function updateInputFields() {
+    const composition = document.getElementById('team-composition').value;
+    const survivorInputs = document.getElementById('survivor-inputs');
+    survivorInputs.innerHTML = '';
+    
+    if (!composition) return;
+    
+    survivorInputs.innerHTML = '<label>求生者各组胜率 (%)</label>';
+    
+    switch (composition) {
+        case 'four-solo':
+            addInputField(survivorInputs, '单排一');
+            addInputField(survivorInputs, '单排二');
+            addInputField(survivorInputs, '单排三');
+            addInputField(survivorInputs, '单排四');
+            break;
+        case 'one-duo-two-solo':
+            addInputField(survivorInputs, '双排');
+            addInputField(survivorInputs, '单排一');
+            addInputField(survivorInputs, '单排二');
+            break;
+        case 'one-trio-one-solo':
+            addInputField(survivorInputs, '三排');
+            addInputField(survivorInputs, '单排');
+            break;
+        case 'two-duo':
+            addInputField(survivorInputs, '双排一');
+            addInputField(survivorInputs, '双排二');
+            break;
+        case 'one-four':
+            addInputField(survivorInputs, '四排');
+            break;
+    }
+}
+
+// 添加输入字段
+function addInputField(container, label) {
+    const div = document.createElement('div');
+    div.className = 'group-input';
+    div.innerHTML = `
+        <label>${label}胜率:</label>
+        <input type="number" class="survivor-winrate" min="0" max="100" step="0.1" placeholder="例如：50.0">
+    `;
+    container.appendChild(div);
+}
+
+// 计算胜率
+function calculateWinrate() {
+    const composition = document.getElementById('team-composition').value;
+    const hunterWinrate = parseFloat(document.getElementById('hunter-winrate').value) / 100;
+    
+    // 验证输入
+    if (!composition) {
+        alert('请选择求生者组排情况');
+        return;
+    }
+    
+    if (isNaN(hunterWinrate) || hunterWinrate < 0 || hunterWinrate > 1) {
+        alert('请输入有效的监管者胜率');
+        return;
+    }
+    
+    // 获取所有求生者胜率输入
+    const survivorWinrateInputs = document.querySelectorAll('.survivor-winrate');
+    const survivorWinrates = [];
+    
+    for (const input of survivorWinrateInputs) {
+        const winrate = parseFloat(input.value) / 100;
+        if (isNaN(winrate) || winrate < 0 || winrate > 1) {
+            alert('请输入有效的求生者胜率');
+            return;
+        }
+        survivorWinrates.push(winrate);
+    }
+    
+    // 计算监管者的elo分数
+    const hunterX = inverseLogistic(hunterWinrate);
+    
+    // 计算求生者的elo分数总和
+    let survivorTotalElo = 0;
+    for (const winrate of survivorWinrates) {
+        const survivorX = inverseLogistic(winrate);
+        survivorTotalElo += survivorX;
+    }
+    
+    // 计算新的差值
+    const newDiff = hunterX - survivorTotalElo;
+    // 计算新的x，减去n倍的0.405，n是组数
+    const n = survivorWinrates.length;
+    const newX = newDiff - n * 0.405;
+    
+    // 计算预测的监管者胜率
+    const predictedHunterWinrate = logistic(newX) * 100;
+    const predictedSurvivorWinrate = 100 - predictedHunterWinrate;
+    
+    // 显示结果
+    document.getElementById('predicted-hunter-winrate').textContent = predictedHunterWinrate.toFixed(2);
+    document.getElementById('predicted-survivor-winrate').textContent = predictedSurvivorWinrate.toFixed(2);
+    document.getElementById('result').style.display = 'block';
+}
