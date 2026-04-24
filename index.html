@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>第五人格胜率预测</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700&display=swap');
+        
+        :root {
+            --primary-color: #6a1b9a;
+            --secondary-color: #ec407a;
+            --accent-color: #ff9800;
+            --background-color: #f5f5f5;
+            --card-color: #ffffff;
+            --text-color: #333333;
+            --text-light: #666666;
+            --border-color: #e0e0e0;
+            --success-color: #4caf50;
+            --warning-color: #ff9800;
+            --info-color: #2196f3;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Noto Sans SC', Arial, sans-serif;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #6a1b9a, #ec407a);
+            padding: 20px;
+        }
+        
+        .container {
+            background: var(--card-color);
+            padding: 40px;
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+            max-width: 800px;
+            width: 100%;
+            animation: fadeIn 0.5s ease-in-out;
+        }
+        
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        h1 {
+            text-align: center;
+            color: var(--primary-color);
+            margin-bottom: 30px;
+            font-size: 28px;
+            font-weight: 700;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        
+        .form-group {
+            margin-bottom: 25px;
+            animation: slideIn 0.5s ease-in-out;
+        }
+        
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateX(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: var(--text-color);
+            font-size: 16px;
+        }
+        
+        select, input[type="number"] {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid var(--border-color);
+            border-radius: 8px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            background: var(--background-color);
+        }
+        
+        select:focus, input[type="number"]:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(106, 27, 154, 0.1);
+        }
+        
+        input[type="number"] {
+            width: 120px;
+        }
+        
+        .group-input {
+            margin-bottom: 15px;
+            padding: 15px;
+            background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+            border-radius: 8px;
+            border-left: 4px solid var(--primary-color);
+            transition: all 0.3s ease;
+        }
+        
+        .group-input:hover {
+            transform: translateX(5px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+        
+        input[type="checkbox"] {
+            margin-right: 8px;
+            transform: scale(1.2);
+        }
+        
+        button {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            padding: 14px 24px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 18px;
+            font-weight: 500;
+            width: 100%;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(106, 27, 154, 0.3);
+        }
+        
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(106, 27, 154, 0.4);
+        }
+        
+        button:active {
+            transform: translateY(0);
+        }
+        
+        .result {
+            margin-top: 30px;
+            padding: 25px;
+            background: linear-gradient(135deg, #e3f2fd, #bbdefb);
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            animation: pulse 1s ease-in-out;
+        }
+        
+        @keyframes pulse {
+            0% {
+                transform: scale(0.95);
+                opacity: 0;
+            }
+            50% {
+                transform: scale(1.02);
+            }
+            100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+        
+        .result h2 {
+            margin-top: 0;
+            color: var(--primary-color);
+            font-size: 24px;
+            margin-bottom: 20px;
+        }
+        
+        .result p {
+            font-size: 20px;
+            margin: 12px 0;
+            color: var(--text-color);
+            font-weight: 500;
+        }
+        
+        .result span {
+            color: var(--secondary-color);
+            font-weight: 700;
+            font-size: 22px;
+        }
+        
+        .note {
+            margin-top: 20px;
+            padding: 18px;
+            background: linear-gradient(135deg, #fff3e0, #ffe0b2);
+            border-radius: 8px;
+            font-size: 14px;
+            color: #e65100;
+            border-left: 4px solid var(--accent-color);
+        }
+        
+        #developer-options {
+            margin-top: 15px;
+            padding: 20px;
+            background: linear-gradient(135deg, #f3e5f5, #e1bee7);
+            border-radius: 8px;
+            border-left: 4px solid var(--secondary-color);
+            animation: fadeIn 0.5s ease-in-out;
+        }
+        
+        #developer-options p {
+            font-size: 12px;
+            color: var(--text-light);
+            margin-top: 8px;
+        }
+        
+        .author {
+            margin-top: 30px;
+            text-align: center;
+            font-size: 14px;
+            color: var(--text-light);
+            font-style: italic;
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                padding: 30px;
+            }
+            
+            h1 {
+                font-size: 24px;
+            }
+            
+            .result p {
+                font-size: 18px;
+            }
+            
+            .result span {
+                font-size: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>第五人格胜率预测</h1>
+        
+        <div class="form-group">
+            <label for="team-composition">求生者组排情况</label>
+            <select id="team-composition" onchange="updateInputFields()">
+                <option value="">请选择</option>
+                <option value="four-solo">四个单排</option>
+                <option value="one-duo-two-solo">一组双排两组单排</option>
+                <option value="one-trio-one-solo">一组三排一组单排</option>
+                <option value="two-duo">两组双排</option>
+                <option value="one-four">一组四排</option>
+            </select>
+        </div>
+        
+        <div id="survivor-inputs" class="form-group">
+            <!-- 动态生成的求生者胜率输入字段 -->
+        </div>
+        
+        <div class="form-group">
+            <label for="hunter-winrate">监管者胜率 (%)</label>
+            <input type="number" id="hunter-winrate" min="0" max="100" step="0.1" placeholder="例如：55.5">
+        </div>
+        
+        <div class="form-group">
+            <label>
+                <input type="checkbox" id="developer-mode"> 开发者模式
+            </label>
+        </div>
+        
+        <div id="developer-options" class="form-group" style="display: none;">
+            <label for="hunter-avg-winrate">监管者阵营平均胜率 (%)</label>
+            <input type="number" id="hunter-avg-winrate" min="0" max="100" step="0.1" value="60" placeholder="例如：60">
+            <p style="font-size: 12px; color: var(--text-light);">默认值60%对应调整因子0.405</p>
+            
+            <h3 style="margin-top: 20px; margin-bottom: 15px; color: var(--primary-color); font-size: 16px;">权重调整</h3>
+            <div style="display: flex; flex-wrap: wrap; gap: 15px;">
+                <div style="flex: 1; min-width: 150px;">
+                    <label for="duo-weight">双排权重</label>
+                    <input type="number" id="duo-weight" min="1" max="2" step="0.1" value="1" placeholder="1-2">
+                </div>
+                <div style="flex: 1; min-width: 150px;">
+                    <label for="trio-weight">三排权重</label>
+                    <input type="number" id="trio-weight" min="1" max="3" step="0.1" value="1" placeholder="1-3">
+                </div>
+                <div style="flex: 1; min-width: 150px;">
+                    <label for="four-weight">四排权重</label>
+                    <input type="number" id="four-weight" min="1" max="4" step="0.1" value="1" placeholder="1-4">
+                </div>
+            </div>
+            <p style="font-size: 12px; color: var(--text-light); margin-top: 10px;">单排权重固定为1，无法修改</p>
+            
+            <div style="margin-top: 20px;">
+                <label for="elo-compensation">兜底elo分数补偿</label>
+                <input type="number" id="elo-compensation" min="-10" max="10" step="0.1" value="0" placeholder="例如：0.5">
+                <div style="font-size: 12px; color: var(--text-light); margin-top: 5px; line-height: 1.4;">
+                    <p>正数为加，负数为减，默认为0</p>
+                    <p><strong>作用：</strong>直接调整监管者的最终elo分数，用于微调预测结果</p>
+                    <p><strong>使用场景：</strong>当默认计算结果与实际情况存在系统性偏差时，可以通过此补偿值进行校准</p>
+                    <p><strong>示例：</strong>若监管者实际胜率普遍高于预测值，可设置正数补偿；反之设置负数</p>
+                </div>
+            </div>
+            
+            <button type="button" onclick="resetDefaults()" style="margin-top: 20px; background: linear-gradient(135deg, #9e9e9e, #616161);">
+                恢复默认
+            </button>
+        </div>
+        
+        <button onclick="calculateWinrate()">计算胜率</button>
+        
+        <div id="result" class="result" style="display: none;">
+            <h2>预测结果</h2>
+            <p>监管者胜率: <span id="predicted-hunter-winrate"></span>%</p>
+            <p>求生者胜率: <span id="predicted-survivor-winrate"></span>%</p>
+        </div>
+        
+        <div class="note">
+            <strong>注：</strong>此计算方式默认组排的各个求生者胜率相同。
+            <br>
+            <strong>注：</strong>此计算方式默认双方段位基本一致。
+        </div>
+        
+        <div class="author">
+            from Laplace的猫
+        </div>
+        
+        <div style="margin-top: 20px;">
+            <button type="button" onclick="toggleChangelog()" style="background: linear-gradient(135deg, #607d8b, #455a64); width: 100%;">
+                更新日志
+            </button>
+            <div id="changelog" style="display: none; margin-top: 10px; padding: 15px; background: linear-gradient(135deg, #eceff1, #cfd8dc); border-radius: 8px;">
+                <h3 style="color: var(--primary-color); margin-bottom: 10px;">更新记录</h3>
+                <ul style="list-style-type: none; padding-left: 0;">
+                    <li style="margin-bottom: 8px; padding-left: 20px; position: relative;">
+                        <span style="position: absolute; left: 0;">•</span>
+                        <strong>2026.4.23</strong> - 接入开发者模式并署名
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    
+    <script src="script.js"></script>
+</body>
+</html>
